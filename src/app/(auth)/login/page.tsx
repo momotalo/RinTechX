@@ -5,9 +5,8 @@ import LoginForm from '@/components/LoginForm';
 import DeviceIllustration from '@/components/DeviceIllustration';
 import AuthLayout from '@/components/AuthLayout';
 
-
 export const metadata: Metadata = {
-    title: 'เข้าสู่ระบบ | RinTechX',
+    title: 'เข้าสู่ระบบ',
     description: 'เข้าสู่ระบบเพื่อเข้าถึงบริการของ RinTechX',
 };
 

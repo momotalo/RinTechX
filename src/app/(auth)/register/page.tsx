@@ -1,9 +1,15 @@
 import React from 'react';
-import { CircleArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Metadata } from 'next';
+import { CircleArrowLeft } from 'lucide-react';
 import RegisterForm from '@/components/RegisterForm';
 import DeviceIllustration from '@/components/DeviceIllustration';
 import AuthLayout from '@/components/AuthLayout';
+
+export const metadata: Metadata = {
+    title: 'สมัครสมาชิก',
+    description: 'สมัครสมาชิกเพื่อเข้าถึงบริการของ RinTechX',
+};
 
 const RegisterPage = () => {
     return (
