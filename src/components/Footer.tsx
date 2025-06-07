@@ -3,7 +3,8 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Phone, MessageCircle, Landmark } from 'lucide-react'
+import { Phone, MessageCircle } from 'lucide-react'
+import { FaLine, FaPhoneAlt } from "react-icons/fa";
 
 interface FooterProps {
     className?: string
@@ -75,25 +76,11 @@ const Footer: FC<FooterProps> = ({ className = '' }) => {
                         <h3 className="text-lg font-semibold">ติดต่อเรา</h3>
                         <div className="space-y-3">
                             <div className="flex items-center space-x-3">
-                                <Phone className="text-gray-300 w-4 h-4" />
-                                {/* <Image 
-                                    src="/phone.svg"
-                                    alt="Phone Icon"
-                                    width={18}
-                                    height={18}
-                                    // className="w-4 h-4"
-                                /> */}
+                                <FaPhoneAlt className='text-white-300 w-4 h-4'/>
                                 <span className="text-gray-300 text-sm">{contact.phone}</span>
                             </div>
                             <div className="flex items-center space-x-3">
-                                <MessageCircle className="text-gray-300 w-4 h-4" />
-                                {/* <Image 
-                                    src="/line.svg"
-                                    alt="Line Icon"
-                                    width={18}
-                                    height={18}
-                                    // className="w-4 h-4"
-                                />  */}
+                                <FaLine className="text-green-300 w-4 h-4" />
                                 <span className="text-gray-300 text-sm">{contact.line}</span>
                             </div>
                         </div>
