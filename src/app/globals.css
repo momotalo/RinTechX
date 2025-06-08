@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+
+.feature-list {
+
+    & ul {
+        & li {
+            color: #2196f3;
+            & span {
+                color: #000;
+            }
+        }
+    }
+}

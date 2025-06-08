@@ -19,14 +19,18 @@ const Header: FC = () => {
             title: 'หน้าหลัก',
             href: '/'
         },
+        // {
+        //     title: 'บริการของเรา',
+        //     hasDropdown: true,
+        //     dropdownItems: [
+        //         { title: 'พัฒนาระบบ', href: '/services/development' },
+        //         { title: 'ปรึกษาเทคโนโลยี', href: '/services/consulting' },
+        //         { title: 'ดูแลระบบ', href: '/services/maintenance' }
+        //     ]
+        // },
         {
             title: 'บริการของเรา',
-            hasDropdown: true,
-            dropdownItems: [
-                { title: 'พัฒนาระบบ', href: '/services/development' },
-                { title: 'ปรึกษาเทคโนโลยี', href: '/services/consulting' },
-                { title: 'ดูแลระบบ', href: '/services/maintenance' }
-            ]
+            href: '/services'
         },
         {
             title: 'เกี่ยวกับ',
