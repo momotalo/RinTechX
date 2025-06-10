@@ -2,6 +2,7 @@
 import React, { FC, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 
 interface NavItem {
@@ -12,7 +13,9 @@ interface NavItem {
 }
 
 const Header: FC = () => {
+
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const pathname = usePathname(); // เพิ่มบรรทัดนี้
 
   const navItems: NavItem[] = [
     {
@@ -20,13 +23,13 @@ const Header: FC = () => {
       href: "/",
     },
     // {
-    //     title: 'บริการของเรา',
-    //     hasDropdown: true,
-    //     dropdownItems: [
-    //         { title: 'พัฒนาระบบ', href: '/services/development' },
-    //         { title: 'ปรึกษาเทคโนโลยี', href: '/services/consulting' },
-    //         { title: 'ดูแลระบบ', href: '/services/maintenance' }
-    //     ]
+    //   title: 'บริการของเรา',
+    //   hasDropdown: true,
+    //   dropdownItems: [
+    //     { title: 'พัฒนาระบบ', href: '/services/development' },
+    //     { title: 'ปรึกษาเทคโนโลยี', href: '/services/consulting' },
+    //     { title: 'ดูแลระบบ', href: '/services/maintenance' }
+    //   ]
     // },
     {
       title: "บริการของเรา",
@@ -44,6 +47,14 @@ const Header: FC = () => {
 
   const handleDropdownToggle = (title: string) => {
     setActiveDropdown(activeDropdown === title ? null : title);
+  };
+
+  // ฟังก์ชันเช็คว่าเมนูนั้นๆ active หรือไม่
+  const isActiveMenu = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(href);
   };
 
   return (
@@ -78,20 +89,25 @@ const Header: FC = () => {
                   {item.hasDropdown ? (
                     <button
                       onClick={() => handleDropdownToggle(item.title)}
-                      className="text-black-700 flex items-center space-x-1 px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-blue-600"
+                      className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium transition-colors duration-200 ${activeDropdown === item.title || isActiveMenu(item.href || "")
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : "text-gray-700 hover:text-blue-600"
+                        }`}
                     >
                       <span>{item.title}</span>
                       <ChevronDown
                         size={16}
-                        className={`transform transition-transform duration-200 ${
-                          activeDropdown === item.title ? "rotate-180" : ""
-                        }`}
+                        className={`transform transition-transform duration-200 ${activeDropdown === item.title ? "rotate-180" : ""
+                          }`}
                       />
                     </button>
                   ) : (
                     <Link
                       href={item.href || "#"}
-                      className="text-black-700 px-3 py-2 text-sm font-medium transition-colors duration-200 hover:text-blue-600"
+                      className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${isActiveMenu(item.href || "")
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : "text-gray-700 hover:text-blue-600"
+                        }`}
                     >
                       {item.title}
                     </Link>
@@ -132,32 +148,6 @@ const Header: FC = () => {
               สมัครสมาชิก
             </Link>
           </div>
-
-          {/* Mobile menu button */}
-          {/* <div className="md:hidden">
-                        <button
-                            type="button"
-                            className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-                            aria-expanded="false"
-                        >
-                            <span className="sr-only">Open main menu</span>
-                            <svg
-                                className="block h-6 w-6"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M4 6h16M4 12h16M4 18h16"
-                                />
-                            </svg>
-                        </button>
-                    </div> */}
         </div>
       </div>
 
