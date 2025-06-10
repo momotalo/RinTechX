@@ -1,14 +1,54 @@
 @import "tailwindcss";
 
+/* Custom animations for smooth transitions */
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 
-.feature-list {
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
 
-    & ul {
-        & li {
-            color: #2196f3;
-            & span {
-                color: #000;
-            }
-        }
-    }
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Custom utility classes */
+.animate-slide-in-right {
+  animation: slide-in-right 1s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 1s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-in-out;
+}
+
+/* Smooth transition for layout changes */
+.transition-smooth {
+  transition: all 0.3s ease-in-out;
 }

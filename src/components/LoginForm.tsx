@@ -1,11 +1,8 @@
 "use client";
 import React, { FC, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Eye, EyeOff, User, Lock } from "lucide-react";
+import { Eye, EyeOff, User } from "lucide-react";
 
-import { Button, Input, Checkbox, Form } from "@heroui/react";
-import { Icon } from "@iconify/react";
 
 interface LoginFormData {
   username: string;

@@ -2,8 +2,6 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, User, Mail, Phone } from "lucide-react";
 import Link from "next/link";
-import AuthLayout from "../components/AuthLayout";
-import { Button } from "@heroui/react";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({

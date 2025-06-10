@@ -98,6 +98,7 @@ This project uses Prettier and ESLint for code formatting:
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npx prettier --write (file name)` - Format Document manual use Prettierrc
 
 ## 🚀 Deployment
 
@@ -126,8 +127,6 @@ This project uses Prettier and ESLint for code formatting:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 📞 Contact
-
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter) - your.email@example.com
 
 Project Link: [https://github.com/yourusername/your-project-name](https://github.com/yourusername/your-project-name)
 
