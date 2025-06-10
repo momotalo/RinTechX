@@ -53,7 +53,7 @@ const AboutPage = () => {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     placeholder="ค้นหาบทความ..."
-                                    className="w-full rounded-full border border-gray-200 px-6 py-3 pr-12 text-gray-700 placeholder-gray-400 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full rounded-full border border-gray-200 px-6 py-3 pr-12 text-white placeholder-gray-400 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                     onKeyPress={(e) => e.key === "Enter" && handleSearch()}
                                 />
                                 <button
