@@ -1,8 +1,8 @@
 "use client";
 import React, { FC, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; // เพิ่ม useRouter
 import { Eye, EyeOff, User } from "lucide-react";
-
 
 interface LoginFormData {
   username: string;
@@ -15,6 +15,8 @@ interface FormErrors {
 }
 
 const LoginForm: FC = () => {
+  const router = useRouter(); // เพิ่ม router instance
+
   const [formData, setFormData] = useState<LoginFormData>({
     username: "",
     password: "",
@@ -69,14 +71,26 @@ const LoginForm: FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       console.log("Login attempt:", formData);
-      // Redirect to dashboard or home page
-      // router.push('/dashboard');
+
+      // จำลองการตรวจสอบ credentials
+      // ในโปรเจคจริงจะเป็น API call
+      if (formData.username && formData.password) {
+        console.log("เข้าสู่ระบบสำเร็จ!");
+
+        // นำทางไปหน้า dashboard เมื่อเข้าสู่ระบบสำเร็จ
+        router.push('/dashboard');
+      } else {
+        throw new Error("Invalid credentials");
+      }
+
     } catch (error) {
       console.error("Login error:", error);
-      setErrors({ username: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" });
-    } finally {
-      setIsLoading(false);
+      setErrors({
+        username: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"
+      });
+      setIsLoading(false); // เซ็ต loading เป็น false เมื่อมี error
     }
+    // ไม่ต้องเซ็ต finally setIsLoading(false) เพราะจะ redirect ไปหน้าใหม่
   };
 
   return (
