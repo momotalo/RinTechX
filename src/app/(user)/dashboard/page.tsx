@@ -1,13 +1,13 @@
 import React from 'react'
 import Image from "next/image";
 import Link from 'next/link';
-import DashboardLayout from '@/components/DashboardLayout';
+import LayoutUser from "@/components/layout/LayoutUser";
 
 import { FaWallet, FaArrowCircleRight, FaClock, FaCheckCircle, FaPaperPlane, FaEye, FaTimesCircle, FaTimes } from "react-icons/fa";
 
 const DashboardPage = () => {
     return (
-        <DashboardLayout>
+        <LayoutUser breadcrumb={{ category: "Pages", page: "Dashboard" }}>
             <div className="announce mb-4">
                 <p className='p-2 text-[#fff] font-normal bg-linear-to-r from-[#0E345B] to-[#1E6EC1]'>
                     ประกาศ <span className='ml-2'>สวัสดีคะ RinTechX ยินดีให้บริการ 24 ชั่วโมง หากต้องการติดต่อสอบถามการใช้งานเพิ่มเติม สามารถติดต่อได้ที่ LINE ID : @xxxxxx</span></p>
@@ -146,7 +146,7 @@ const DashboardPage = () => {
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
+        </LayoutUser>
     )
 }
 

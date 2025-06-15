@@ -1,31 +1,62 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+// icon in sidebar
 import {
     IoClose,
-    IoTv,
+    IoChevronDown,
+    IoChevronUp,
+    IoPerson,
+    IoSettings,
+    IoStatsChart,
+    IoDocument,
     IoMenu,
+    IoChatbubbleEllipses,
+    IoCalendar,
+    IoCard,
+    IoList,
+    IoCode,
+    IoCall,
+    IoSend,
+    IoPeople,
+    IoShield,
+    IoCart,
+    IoPieChart,
+    IoClipboard,
+    IoKey,
+    IoLogOut
 } from "react-icons/io5";
-import { FaUser, FaBell, FaCog } from "react-icons/fa";
+import { BiSolidDashboard } from "react-icons/bi";
+// icon in nav
+import { FaUser, FaBell, FaCog, FaChevronDown } from "react-icons/fa";
 
 // Types
-interface MenuItem {
+interface SubMenuItem {
     id: string;
     label: string;
     href: string;
+    icon?: React.ReactNode;
+    iconColor?: string;
+}
+
+interface MenuItem {
+    id: string;
+    label: string;
+    href?: string;
     icon: React.ReactNode;
     iconColor: string;
     bgColor?: string;
+    subItems?: SubMenuItem[];
 }
 
 interface SidebarProps {
     isOpen: boolean;
     onClose: () => void;
     sidebarColor?: string;
-    sidebarType: 'white' | 'dark';
+    sidebarType?: 'white' | 'dark';
 }
 
 interface NavbarProps {
@@ -35,6 +66,7 @@ interface NavbarProps {
         page: string;
     };
     isNavbarFixed?: boolean;
+    username?: string; // เพิ่ม username prop
 }
 
 interface DashboardLayoutProps {
@@ -43,6 +75,7 @@ interface DashboardLayoutProps {
         category: string;
         page: string;
     };
+    username?: string; // เพิ่ม username prop
 }
 
 interface FixedPluginProps {
@@ -57,6 +90,77 @@ interface FixedPluginProps {
     isNavbarFixed: boolean;
     isDarkMode: boolean;
 }
+
+// User Dropdown Component
+const UserDropdown: React.FC<{ username: string; textColorClass: string }> = ({ username, textColorClass }) => {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            {/* Username Button */}
+            <button
+                onClick={toggleDropdown}
+                className={`flex items-center px-3 py-2 text-sm font-semibold ${textColorClass} transition-all ease-nav-brand hover:opacity-80 rounded-lg hover:bg-white/10`}
+            >
+                <div className="flex items-center bg-white/20 rounded-full px-2 py-1 mr-2">
+                    <span className="text-xs font-bold text-white bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center">
+                        <FaUser />
+                    </span>
+                    <span className={`ml-2 text-sm font-medium ${textColorClass}`}>
+                        {username}
+                    </span>
+                    <FaChevronDown className={`ml-2 w-3 h-3 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''} ${textColorClass}`} />
+                </div>
+            </button>
+
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    {/* Profile Link */}
+                    <Link
+                        href="/profile"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => setIsDropdownOpen(false)}
+                    >
+                        <IoPerson className="w-4 h-4 mr-3 text-slate-500" />
+                        Profile
+                    </Link>
+
+                    {/* Divider */}
+                    <hr className="my-1 border-gray-200" />
+
+                    {/* Logout Link */}
+                    <Link
+                        href="/"
+                        className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        onClick={() => setIsDropdownOpen(false)}
+                    >
+                        <IoLogOut className="w-4 h-4 mr-3" />
+                        Logout
+                    </Link>
+                </div>
+            )}
+        </div>
+    );
+};
 
 // Fixed Plugin Component
 const FixedPlugin: React.FC<FixedPluginProps> = ({
@@ -82,15 +186,6 @@ const FixedPlugin: React.FC<FixedPluginProps> = ({
 
     return (
         <div className="fixed-plugin">
-            {/* Plugin Button */}
-            {/* <button
-                onClick={() => { }}
-                className="fixed p-4 text-xl bg-[#00bbff] shadow-lg cursor-pointer bottom-8 right-8 z-50 rounded-full text-slate-700 hover:shadow-xl transition-all duration-200"
-                aria-label="Open configurator"
-            >
-                <FaCog className="pointer-events-none w-5 h-5" />
-            </button> */}
-
             {/* Plugin Card */}
             <div
                 className={`z-50 backdrop-blur-2xl backdrop-saturate-200 dark:bg-slate-850/80 shadow-3xl w-90 ease fixed top-0 left-auto flex h-full min-w-0 flex-col break-words rounded-none border-0 bg-[#fbf5f8] bg-clip-border px-2.5 duration-200 transition-all ${isOpen ? 'right-0' : '-right-90'
@@ -208,23 +303,9 @@ const FixedPlugin: React.FC<FixedPluginProps> = ({
 
 // Sidebar Component
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, sidebarColor = 'blue', sidebarType = 'white' }) => {
-    // Example 1
-    // const getSidebarClasses = () => {
-    //     const baseClasses = "fixed inset-y-0 flex-wrap items-center justify-between block w-full p-0 my-4 overflow-y-auto antialiased transition-transform duration-200 shadow-xl max-w-64 ease-nav-brand z-40 xl:ml-6 rounded-2xl xl:left-0";
-
-    //     let typeClasses;
-    //     if (sidebarType === 'dark') {
-    //         typeClasses = "text-white bg-[#111c44]";
-    //     } else {
-    //         typeClasses = "bg-[#fff]";
-    //     }
-
-    //     const visibilityClasses = isOpen ? "translate-x-0" : "-translate-x-full xl:translate-x-0";
-    //     return `${baseClasses} ${typeClasses} ${visibilityClasses}`;
-    // };
+    const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
 
     const getSidebarClasses = () => {
-        // เปลี่ยนจาก xl:ml-6 xl:left-0 xl:translate-x-0 เป็น lg:ml-6 lg:left-0 lg:translate-x-0
         const baseClasses = "fixed inset-y-0 flex-wrap items-center justify-between block w-full p-0 my-4 overflow-y-auto antialiased transition-transform duration-200 shadow-xl max-w-64 ease-nav-brand z-40 lg:ml-6 rounded-2xl lg:left-0";
 
         let typeClasses;
@@ -234,7 +315,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, sidebarColor = 'blue
             typeClasses = "bg-[#fff]";
         }
 
-        // เปลี่ยนจาก xl:translate-x-0 เป็น lg:translate-x-0
         const visibilityClasses = isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0";
         return `${baseClasses} ${typeClasses} ${visibilityClasses}`;
     };
@@ -258,53 +338,249 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, sidebarColor = 'blue
             id: "dashboard",
             label: "Dashboard",
             href: "/dashboard",
-            icon: <IoTv className="w-4 h-4" />,
-            iconColor: "text-blue-500", // สีคงที่ตามต้นฉบับ
-            bgColor: getActiveBgColor() // เฉพาะ background ที่เปลี่ยนตาม theme
+            icon: <BiSolidDashboard className="w-4 h-4" />,
+            iconColor: "text-blue-500",
+            bgColor: getActiveBgColor()
         },
         {
-            id: "users",
-            label: "Users",
-            href: "/users",
-            icon: <FaUser className="w-4 h-4" />,
-            iconColor: "text-orange-500"
+            id: "message",
+            label: "ข้อความ",
+            icon: <IoChatbubbleEllipses className="w-4 h-4" />,
+            iconColor: "text-green-500",
+            subItems: [
+                {
+                    id: "send-fast",
+                    label: "ส่งข้อความด่วน",
+                    href: "/messages/send-fast",
+                    icon: <IoSend className="w-3 h-3" />,
+                    iconColor: "text-emerald-500"
+                },
+                {
+                    id: "user-roles",
+                    label: "User Roles",
+                    href: "/users/roles",
+                    icon: <IoSettings className="w-3 h-3" />,
+                    iconColor: "text-purple-500"
+                },
+            ]
         },
+        {
+            id: "calendar",
+            label: "ปฏิทินแคมเปญ",
+            href: "/calendar",
+            icon: <IoCalendar className="w-4 h-4" />,
+            iconColor: "text-orange-500",
+        },
+        {
+            id: "manage",
+            label: "จัดการ",
+            icon: <IoSettings className="w-4 h-4" />,
+            iconColor: "text-purple-500",
+            subItems: [
+                {
+                    id: "shipper-name",
+                    label: "ชื่อผู้จัดส่ง",
+                    href: "/manage/shipper-name",
+                    icon: <IoPeople className="w-3 h-3" />,
+                    iconColor: "text-blue-500"
+                },
+                {
+                    id: "manage-contacts",
+                    label: "จัดการผู้ติดต่อ",
+                    href: "/manage/contacts",
+                    icon: <IoPeople className="w-3 h-3" />,
+                    iconColor: "text-indigo-500"
+                },
+                {
+                    id: "list-block",
+                    label: "รายการบล็อก",
+                    href: "/manage/block-list",
+                    icon: <IoShield className="w-3 h-3" />,
+                    iconColor: "text-red-500"
+                },
+                {
+                    id: "template",
+                    label: "เทมเพลต",
+                    href: "/manage/templates",
+                    icon: <IoDocument className="w-3 h-3" />,
+                    iconColor: "text-cyan-500"
+                },
+                {
+                    id: "otp-service",
+                    label: "บริการ OTP",
+                    href: "/manage/otp-service",
+                    icon: <IoKey className="w-3 h-3" />,
+                    iconColor: "text-amber-500"
+                }
+            ]
+        },
+        {
+            id: "credit",
+            label: "สั่งซื้อเครดิต",
+            href: "/credit/purchase",
+            icon: <IoCard className="w-4 h-4" />,
+            iconColor: "text-emerald-500",
+        },
+        {
+            id: "list",
+            label: "รายการ",
+            icon: <IoList className="w-4 h-4" />,
+            iconColor: "text-slate-500",
+            subItems: [
+                {
+                    id: "list-order",
+                    label: "รายการสั่งซื้อ",
+                    href: "/lists/orders",
+                    icon: <IoCart className="w-3 h-3" />,
+                    iconColor: "text-green-500"
+                },
+                {
+                    id: "sms-tracking",
+                    label: "SMS Tracking",
+                    href: "/lists/sms-tracking",
+                    icon: <IoStatsChart className="w-3 h-3" />,
+                    iconColor: "text-blue-500"
+                },
+                {
+                    id: "report-api-otp",
+                    label: "รายงาน API & OTP",
+                    href: "/lists/api-otp-reports",
+                    icon: <IoPieChart className="w-3 h-3" />,
+                    iconColor: "text-purple-500"
+                },
+                {
+                    id: "report-credit",
+                    label: "รายงานเครดิต",
+                    href: "/lists/credit-reports",
+                    icon: <IoClipboard className="w-3 h-3" />,
+                    iconColor: "text-orange-500"
+                }
+            ]
+        },
+        {
+            id: "apis",
+            label: "APIs",
+            href: "/apis",
+            icon: <IoCode className="w-4 h-4" />,
+            iconColor: "text-teal-500",
+        },
+        {
+            id: "contact",
+            label: "ติดต่อ",
+            href: "/contact",
+            icon: <IoCall className="w-4 h-4" />,
+            iconColor: "text-pink-500",
+        }
     ];
 
-    // Account Menu List
-    // const accountMenuItems: MenuItem[] = [
-    //     {
-    //         id: "profile",
-    //         label: "Profile",
-    //         href: "/profile",
-    //         icon: <IoPerson className="w-4 h-4" />,
-    //         iconColor: "text-slate-700"
-    //     },
-    //     {
-    //         id: "sign-in",
-    //         label: "Sign In",
-    //         href: "/sign-in",
-    //         icon: <IoLogIn className="w-4 h-4" />,
-    //         iconColor: "text-orange-500"
-    //     },
-    //     {
-    //         id: "sign-up",
-    //         label: "Sign Up",
-    //         href: "/sign-up",
-    //         icon: <IoPersonAdd className="w-4 h-4" />,
-    //         iconColor: "text-cyan-500"
-    //     }
-    // ];
+    // ลบ Profile ออกจาก accountMenuItems เนื่องจากย้ายไปใน dropdown แล้ว
+    const accountMenuItems: MenuItem[] = [];
+
+    const toggleDropdown = (itemId: string) => {
+        setOpenDropdowns(prev =>
+            prev.includes(itemId)
+                ? prev.filter(id => id !== itemId)
+                : [...prev, itemId]
+        );
+    };
+
+    const isDropdownOpen = (itemId: string) => openDropdowns.includes(itemId);
 
     const isActive = (href: string) => pathname === href;
 
-    const getMenuItemClasses = (item: MenuItem) => {
-        const baseClasses = "py-3 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors";
-        const activeClasses = isActive(item.href)
-            ? `${item.bgColor || "bg-blue-500/13"} dark:text-[#475f7c] dark:opacity-80 text-slate-700`
-            : "dark:text-slate-700 dark:opacity-80 hover:bg-gray-100 dark:hover:bg-red-300";
+    const isParentActive = (item: MenuItem) => {
+        if (item.href && isActive(item.href)) return true;
+        if (item.subItems) {
+            return item.subItems.some(subItem => isActive(subItem.href));
+        }
+        return false;
+    };
+
+    const getMenuItemClasses = (item: MenuItem, isSubItem = false) => {
+        const baseClasses = `py-3 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors cursor-pointer ${isSubItem ? 'ml-4 py-2' : ''}`;
+
+        let activeClasses;
+        if (isSubItem) {
+            const isActiveSubItem = item.href && isActive(item.href);
+            activeClasses = isActiveSubItem
+                ? `${getActiveBgColor()} dark:text-[#475f7c] dark:opacity-80 text-slate-700`
+                : "dark:text-slate-600 dark:opacity-70 hover:bg-gray-50 dark:hover:bg-gray-100 text-slate-600";
+        } else {
+            const isActiveParent = isParentActive(item);
+            activeClasses = isActiveParent
+                ? `${item.bgColor || getActiveBgColor()} dark:text-[#475f7c] dark:opacity-80 text-slate-700`
+                : "dark:text-slate-700 dark:opacity-80 hover:bg-gray-100 dark:hover:bg-red-300";
+        }
 
         return `${baseClasses} ${activeClasses}`;
+    };
+
+    const renderMenuItem = (item: MenuItem) => {
+        const hasSubItems = item.subItems && item.subItems.length > 0;
+        const dropdownOpen = isDropdownOpen(item.id);
+
+        return (
+            <li key={item.id} className="mt-2 w-full">
+                {hasSubItems ? (
+                    <>
+                        {/* Parent Item with Dropdown */}
+                        <div
+                            onClick={() => toggleDropdown(item.id)}
+                            className={getMenuItemClasses(item)}
+                        >
+                            <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                                <div className={`relative top-0 text-sm leading-normal ${item.iconColor}`}>
+                                    {item.icon}
+                                </div>
+                            </div>
+                            <span className="ml-1 duration-300 opacity-100 pointer-events-none ease flex-1">
+                                {item.label}
+                            </span>
+                            <div className="ml-auto">
+                                {dropdownOpen ? (
+                                    <IoChevronUp className="w-4 h-4 text-gray-500" />
+                                ) : (
+                                    <IoChevronDown className="w-4 h-4 text-gray-500" />
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Dropdown Items */}
+                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${dropdownOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                            }`}>
+                            {item.subItems?.map((subItem) => (
+                                <Link
+                                    key={subItem.id}
+                                    href={subItem.href}
+                                    className={getMenuItemClasses(subItem as MenuItem, true)}
+                                >
+                                    <div className="mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-center stroke-0 text-center">
+                                        <div className={`relative top-0 text-xs leading-normal ${subItem.iconColor}`}>
+                                            {subItem.icon}
+                                        </div>
+                                    </div>
+                                    <span className="ml-1 duration-300 opacity-100 pointer-events-none ease text-xs">
+                                        {subItem.label}
+                                    </span>
+                                </Link>
+                            ))}
+                        </div>
+                    </>
+                ) : (
+                    /* Regular Menu Item */
+                    <Link href={item.href!} className={getMenuItemClasses(item)}>
+                        <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                            <div className={`relative top-0 text-sm leading-normal ${item.iconColor}`}>
+                                {item.icon}
+                            </div>
+                        </div>
+                        <span className="ml-1 duration-300 opacity-100 pointer-events-none ease">
+                            {item.label}
+                        </span>
+                    </Link>
+                )}
+            </li>
+        );
     };
 
     return (
@@ -359,46 +635,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, sidebarColor = 'blue
             <div className="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full">
                 <ul className="flex flex-col pl-0 mb-0">
                     {/* Main Menu Items */}
-                    {mainMenuItems.map((item) => (
-                        <li key={item.id} className="mt-2 w-full">
-                            <Link href={item.href} className={getMenuItemClasses(item)}>
-                                <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                                    <div className={`relative top-0 text-sm leading-normal ${item.iconColor}`}>
-                                        {item.icon}
-                                    </div>
-                                </div>
-                                <span className="ml-1 duration-300 opacity-100 pointer-events-none ease">
-                                    {item.label}
-                                </span>
-                            </Link>
-                        </li>
-                    ))}
+                    {mainMenuItems.map(renderMenuItem)}
 
-                    {/* Account Pages Section */}
-                    {/* <li className="w-full mt-4">
-                        <h6 className="pl-6 ml-2 text-xs font-bold leading-tight uppercase dark:text-white opacity-60">
-                            Account pages
-                        </h6>
-                    </li> */}
+                    {/* Account Pages Section - ซ่อนไว้เนื่องจากไม่มี Profile แล้ว */}
+                    {accountMenuItems.length > 0 && (
+                        <>
+                            <li className="w-full mt-4">
+                                <h6 className="pl-6 ml-2 text-xs font-bold leading-tight uppercase dark:text-white opacity-60">
+                                    Account pages
+                                </h6>
+                            </li>
 
-                    {/* Account Menu Items */}
-                    {/* {accountMenuItems.map((item) => (
-                        <li key={item.id} className="mt-0.5 w-full">
-                            <Link href={item.href} className={getMenuItemClasses(item)}>
-                                <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                                    <div className={`relative top-0 text-sm leading-normal ${item.iconColor}`}>
-                                        {item.icon}
-                                    </div>
-                                </div>
-                                <span className="ml-1 duration-300 opacity-100 pointer-events-none ease">
-                                    {item.label}
-                                </span>
-                            </Link>
-                        </li>
-                    ))} */}
+                            {/* Account Menu Items */}
+                            {accountMenuItems.map(renderMenuItem)}
+                        </>
+                    )}
                 </ul>
             </div>
-
         </aside>
     );
 };
@@ -407,7 +660,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, sidebarColor = 'blue
 const Navbar: React.FC<NavbarProps> = ({
     onSidebarToggle,
     breadcrumb = { category: "Pages", page: "Dashboard" },
-    isNavbarFixed = false
+    isNavbarFixed = false,
+    username = "NONTHAWAT" // Default username
 }) => {
     const textColorClass = isNavbarFixed ? 'text-slate-700' : 'text-white';
     const textOpacityClass = isNavbarFixed ? 'opacity-60' : 'opacity-50';
@@ -440,15 +694,9 @@ const Navbar: React.FC<NavbarProps> = ({
 
                     {/* Navigation Items */}
                     <ul className="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
-                        {/* Sign In */}
+                        {/* Username Dropdown */}
                         <li className="flex items-center">
-                            <Link
-                                href="/sign-in"
-                                className={`block px-0 py-2 text-sm font-semibold ${textColorClass} transition-all ease-nav-brand hover:opacity-80`}
-                            >
-                                <FaUser className="w-4 h-4 sm:mr-1 inline" />
-                                <span className="hidden sm:inline">Sign In</span>
-                            </Link>
+                            <UserDropdown username={username} textColorClass={textColorClass} />
                         </li>
 
                         {/* Mobile Menu Toggle - เปลี่ยนจาก xl:hidden เป็น lg:hidden */}
@@ -471,7 +719,8 @@ const Navbar: React.FC<NavbarProps> = ({
 // Main Dashboard Layout Component
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     children,
-    breadcrumb = { category: "Pages", page: "Dashboard" }
+    breadcrumb = { category: "Pages", page: "Dashboard" },
+    username = "NONTHAWAT" // Default username
 }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isPluginOpen, setIsPluginOpen] = useState(false);
@@ -522,7 +771,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <div className="m-0 font-sans text-base antialiased font-normal leading-default">
             {/* Background */}
             <div className={`absolute w-full min-h-[50%] ${isDarkMode ? 'dark bg-[#0E345B]' : 'bg-[#989898]'
-                } ${isNavbarFixed ? 'fixed top-0 left-0 right-0 z+50 h-32' : '' // แก้ z+100 เป็น z-50
+                } ${isNavbarFixed ? 'fixed top-0 left-0 right-0 z-50 h-32' : ''
                 }`}></div>
 
             {/* Sidebar */}
@@ -540,6 +789,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     onSidebarToggle={toggleSidebar}
                     breadcrumb={breadcrumb}
                     isNavbarFixed={isNavbarFixed}
+                    username={username}
                 />
 
                 {/* Content */}
