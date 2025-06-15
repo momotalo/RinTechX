@@ -521,7 +521,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     return (
         <div className="m-0 font-sans text-base antialiased font-normal leading-default">
             {/* Background */}
-            <div className={`absolute w-full min-h-[50%] ${isDarkMode ? 'dark bg-[#0E345B]' : 'bg-[#989898]'
+            <div className={`absolute w-full min-h-[50%] ${isDarkMode ? 'dark bg-[#0E345B]' : 'bg-[]'
                 } ${isNavbarFixed ? 'fixed top-0 left-0 right-0 z+50 h-32' : '' // แก้ z+100 เป็น z-50
                 }`}></div>
 
